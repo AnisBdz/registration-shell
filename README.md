@@ -1,2 +1,2 @@
-# registration-shell
-Shell emulation implementation for registration page 
+# Shellmates registeration page
+Shell emulation implementation for shellmates' registration page 
