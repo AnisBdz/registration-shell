@@ -19,12 +19,14 @@
 
 			#terminal {
 				display: inline-block;
+
 				position: absolute;
 				left: 50%;
 				top: 50%;
-
 				transform: translate(-50%, -50%);
-				box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.2)
+
+				box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.2);
+				transition: all 0.5s ease-out 0s;
 			}
 
 			#terminal .term, #terminal .termReverse {
@@ -32,27 +34,40 @@
 				font-family: monospace;
 			}
 
-			#terminal .term { color: white }
+			#terminal .term { color: #E5E5E5 }
 			#terminal .termReverse { background: white }
 		</style>
 
 	</head>
 	<body>
 
-		<div id="terminal-overlay">
-			<div id="terminal"></div>
+		<button type="button" id="register-btn">Register</button>
+
+		<div id="terminal-overlay" style="visibility: hidden">
+			<div id="terminal" style="opacity: 0;"></div>
 		</div>
 
 		<script type="text/javascript">
+
+			document.getElementById('register-btn').addEventListener('click', showTerminal)
+
+			function showTerminal() {
+				document.getElementById('terminal-overlay').style.visibility = 'visible'
+				document.getElementById('terminal').style.opacity = '0.9'
+			}
+
 			let term = new Terminal({
 
-				greeting: '%+r +++ Terminal ready. +++ %-r%nType "help" for help.%n',
+				greeting: '%+r == Shellmates == %-r%nType "help" for help.%n',
+				ps: '%c3user@shellmates:%c7/%c0$',
 				id: 0,
 
 				x: 0,
 				y: 0,
 
-				frameWidth: 0,
+				frameWidth: 10,
+				frameColor: 'black',
+				bgColor: 'black',
 
 				termDiv: 'terminal',
 				crsrBlinkMode: true,
