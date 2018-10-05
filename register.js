@@ -97,6 +97,18 @@ class Shell {
 
 		// open the cli
 		this.cli.open()
+
+		// cli alias
+		let cli = this.cli
+
+		// register ctrl+c hotkey
+		document.addEventListener('keydown', e => {
+			if (e.key == 'c' && e.ctrlKey) {
+				cli.write('^C')
+				cli.scanning = false
+				cli.prompt()
+			}
+		})
 	}
 
 }
