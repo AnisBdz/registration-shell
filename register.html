@@ -30,6 +30,10 @@
 				transition: all 0.5s ease-out 0s;
 			}
 
+			#terminal > table > tbody > tr > td {
+				border-radius: 4px;
+			}
+
 			#terminal .term, #terminal .termReverse {
 				font-size: 14px;
 				font-family: monospace;
@@ -45,7 +49,8 @@
 		<button type="button" id="register-btn">Register</button>
 
 		<div id="terminal-overlay" style="visibility: hidden">
-			<div id="terminal" style="opacity: 0;"></div>
+			<div id="terminal" style="opacity: 0;">
+			</div>
 		</div>
 
 		<script type="text/javascript" src="register.js"></script>
