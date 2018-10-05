@@ -19,19 +19,36 @@ class Shell {
 					}
 				},
 
+				exit: {
+					name: 'exit',
+					type: 'builtin',
+					man: 'Exit the shell',
+					fn: () => {
+						setTimeout(() => this.cli.close(), 1000)
+						this.cli.write(`:'(`)
+						return ''
+					}
+				},
+
 				register: {
 					name: 'register',
 					type: 'usr',
 					man: 'Become a shellmate',
 					fn: () => {
-						throw new Error('Not Yet Implemented!')
+
+						this.cli.write(`What's your name?`)
+						this.cli.scan()
+						.then(s => this.cli.write(`Hello, ${s}!`))
+						.then(() => this.cli.prompt())
+
+						return ''
 					}
 				}
 			},
 
 			filesystem: {
 				etc: {
-					file: 'Helo, World!'
+					file: 'Hello, World!'
 				}
 			}
 		})
@@ -63,14 +80,17 @@ class Shell {
 				var line = this.lineBuffer;
 				this.newLine();
 
-				if (line == "exit") {
-				  this.close();
-				  return;
-				}
+				if (line != "") {
 
-				else if (line != "") {
+					// if a line was being scanned
+					if (this.scanning) {
+						this.scanned(line)
+						return
+					}
+
 					this.write(system.run(line))
 				}
+
 				this.prompt();
 			}
 		})
@@ -82,7 +102,26 @@ class Shell {
 }
 
 let shell = new Shell({
-	id: 'terminal'
+	id: 'terminal',
+	form: {
+		name: {
+			question: `What's your full name?`,
+			type: String,
+			length: 50
+		},
+
+		age: {
+			question: `How old are you?`,
+			type: Number,
+			range: [18, 36]
+		},
+
+		wilaya: {
+			question: `Where are you from?`,
+			type: Array,
+			answers: ['Alger', 'Setif', 'Blida']
+		}
+	}
 })
 
 
