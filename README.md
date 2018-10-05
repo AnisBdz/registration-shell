@@ -8,3 +8,4 @@ Todo :
 	* _implement get raw line_
 * Add form questions
 * Add registration to homepage
+* [handle responsivity]
