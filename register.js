@@ -69,6 +69,13 @@ class Shell {
 		// Shell's system (filesystem, commands, ...)
 		this.system = new Termly({
 			commands: {
+				shell: {
+					name: 'shell',
+					type: 'builtin',
+					man: 'Interactive Shell',
+					fn: () => ''
+				},
+
 				clear: {
 					name: 'clear',
 					type: 'builtin',
@@ -164,17 +171,79 @@ class Shell {
 			},
 
 			filesystem: {
+				init: 'Binary executable.',
 				etc: {
-					file: 'Hello, World!'
+					apache2: {
+						'apach2.conf': ''
+					},
+
+					apt: {
+						'sources.list': ''
+					}
+				},
+
+				home: {
+					guest: {
+						docs: {
+							homework: 'I got none of that.'
+						},
+
+						'todo.txt': ['# Things i need to do', '', '* Join the shellmates', '* Buy some wafer', '* Learn to play piano']
+					}
+				},
+
+				root: {
+					'README.md': ['Hey!', 'You are not supposed to be seeing this.']
+				},
+
+				usr: {
+					share: {
+						themes: {},
+						games: {}
+					}
+				},
+
+				bin: {
+					help: 'Binary executable.',
+					whoami: 'Binary executable.',
+					pwd: 'Binary executable.',
+					printenv: 'Binary executable.',
+					'export': 'Binary executable.',
+					cd: 'Binary executable.',
+					ls: 'Binary executable.',
+					cat: 'Binary executable.',
+					man: 'Binary executable.',
+					history: 'Binary executable.',
+					clear: 'Binary executable.',
+					exit: 'Binary executable.',
+					join: 'Binary executable.',
+					shell: 'Binary executable.'
 				}
 			},
 
 			env: {
 				USER: 'guest',
-				PATH: '',
+				PATH: '/bin',
 				HOSTNAME: 'shellmates'
 			}
 		})
+
+		// change file permissions and owner name
+		this.system.fs.FileSystem.content.home.content.guest.user = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.group = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content.docs.user = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content.docs.group = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content['todo.txt'].user = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content['todo.txt'].group = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content.docs.content.homework.user = 'guest'
+		this.system.fs.FileSystem.content.home.content.guest.content.docs.content.homework.group = 'guest'
+		this.system.fs.FileSystem.content.init.permission = 'rwx------'
+		for (let file of ['help', 'whoami', 'pwd', 'printenv', 'export', 'cd', 'ls', 'cat', 'man', 'history', 'clear', 'exit', 'join', 'shell'])
+			this.system.fs.FileSystem.content.bin.content[file].permission = 'rwxr-xr-x'
+
+
+		// change home directory
+		this.system.run('cd /home/guest')
 
 		// remove some commands
 		delete this.system.ShellCommands.about
@@ -188,7 +257,11 @@ class Shell {
 		this.cli = new Terminal({
 
 			greeting: '%+r == Shellmates == %-r%nType %c7help%c0 for help.%n',
-			ps: () => `%c3guest@shellmates:%c7/${system.fs.cwd.slice(1).join('/')}%c0 $`,
+			ps: () => {
+				let wd = system.fs.cwd.slice(1).join('/')
+				return `%c3guest@shellmates:%c7${wd == 'home/guest' ? '~' : `/${wd}`}%c0 $`
+			},
+
 			id: 0,
 
 			x: 0,
