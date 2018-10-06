@@ -253,6 +253,14 @@ class Shell {
 		// system alias
 		let system = this.system
 
+		// calculate responsive width and height for shell
+		let cols = Math.min(80, (window.innerWidth / 8).toFixed(0))
+		let rows = (cols * (3/4) / 2.5).toFixed(0)
+
+		if (cols < 50) rows = 20
+
+		console.log(cols, rows)
+
 		// Shell's command line interface
 		this.cli = new Terminal({
 
@@ -267,9 +275,13 @@ class Shell {
 			x: 0,
 			y: 0,
 
+			cols,
+			rows,
+
 			frameWidth: 10,
 			frameColor: 'black',
 			bgColor: 'black',
+
 
 			termDiv: options.id,
 			crsrBlinkMode: true,

@@ -9,6 +9,6 @@ Todo :
 	* _implement ctrl+c exit hotkey_
 * Add form questions
 * Add registration to homepage
-* [handle responsivity]
+* _[handle responsivity]_
 * Save form to firebase
 * Minify scripts and cat them into single app script
