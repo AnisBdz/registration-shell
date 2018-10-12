@@ -303,36 +303,6 @@ class Shell {
 				}
 
 				this.prompt();
-			},
-
-			initHandler() {
-				this.clear()
-
-				// write a bar each step for 10 times
-				let self = this, i = 20
-				function step() {
-
-					self.clear()
-					self.write(`loading${'.'.repeat((20 - i) % 4)}%n[${'='.repeat(20-i) }>${' '.repeat(i)}]`)
-
-					// final step
-					if (--i == 0) start()
-					else setTimeout(step, 200)
-				}
-
-				// start loading...
-				step()
-
-				function start() {
-					self.clear()
-
-					self.write(self.conf.greeting)
-
-
-					self.newLine()
-					self.prompt()
-				}
-
 			}
 		})
 

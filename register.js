@@ -40,7 +40,7 @@ let shell = new Shell({
 
 
 /* DOM Manipulation */
-// showTerminal()
+showTerminal()
 document.getElementById('register-btn').addEventListener('click', showTerminal)
 
 function showTerminal() {
