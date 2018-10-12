@@ -66,6 +66,10 @@ class Shell {
 		// register callback
 		this.registerCallback = options.register || function (answer) { console.log(answer) }
 
+		// close callback
+		this.closeCallback = options.close || null
+
+
 		// Form questions
 		this.form = options.form.reverse()
 
@@ -103,7 +107,7 @@ class Shell {
 					type: 'builtin',
 					man: 'Exit the shell',
 					fn: () => {
-						setTimeout(() => this.cli.close(), 1000)
+						setTimeout(() => this.close(), 1000)
 						this.cli.write(`:'(`)
 						return ''
 					}
@@ -327,5 +331,13 @@ class Shell {
 	open() {
 		// open the cli
 		this.cli.open()
+	}
+
+	close() {
+		// close the cli
+		setTimeout(() => this.cli.close(), 1000)
+
+		// call the close callback if any
+		if (this.closeCallback) this.closeCallback()
 	}
 }

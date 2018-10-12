@@ -7,6 +7,10 @@ let shell = new Shell({
 		console.log(answer)
 	},
 
+	close() {
+		closeTerminal()
+	},
+
 	form: [
 		{
 			id: 'name',
@@ -40,7 +44,7 @@ let shell = new Shell({
 
 
 /* DOM Manipulation */
-// showTerminal()
+showTerminal()
 document.getElementById('register-btn').addEventListener('click', showTerminal)
 
 function showTerminal() {
@@ -48,6 +52,7 @@ function showTerminal() {
 
 	shell.open()
 	document.getElementById('terminal-overlay').style.visibility = 'visible'
+	document.getElementById('terminal-overlay').style.opacity = '1'
 	term.style.opacity = '0.9'
 
 	// handle mobile keyboard
@@ -71,4 +76,13 @@ function showTerminal() {
 
 	term.appendChild(dummy)
 	term.addEventListener('click', e => dummy.focus())
+	dummy.focus()
+}
+
+function closeTerminal() {
+	document.getElementById('terminal').style.opacity = '0'
+	document.getElementById('terminal-overlay').style.opacity = '0'
+	setTimeout(() => {
+		document.getElementById('terminal-overlay').style.visibility = 'hidden'
+	}, 500)
 }
