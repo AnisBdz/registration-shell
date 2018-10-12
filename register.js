@@ -40,11 +40,34 @@ let shell = new Shell({
 
 
 /* DOM Manipulation */
-showTerminal()
+// showTerminal()
 document.getElementById('register-btn').addEventListener('click', showTerminal)
 
 function showTerminal() {
+	let term = document.getElementById('terminal')
+
 	shell.open()
 	document.getElementById('terminal-overlay').style.visibility = 'visible'
-	document.getElementById('terminal').style.opacity = '0.9'
+	term.style.opacity = '0.9'
+
+	// handle mobile keyboard
+	let dummy = document.createElement('input')
+	dummy.setAttribute('autocapitalize', 'off')
+	dummy.setAttribute('style', `position: absolute; top: 10px; left: 10px;`)
+	dummy.id = 'dummy'
+	dummy.addEventListener('input', e => {
+		press(e.data.charCodeAt(0))
+		dummy.value = ''
+	})
+	dummy.addEventListener('keydown', e => {
+		if (e.key == 'Unidentified') return
+		press(e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode)
+	})
+
+	function press(key) {
+		Terminal.prototype.globals.keyHandler({ which: key, _remapped: true, _repeated: false})
+	}
+
+	term.appendChild(dummy)
+	term.addEventListener('click', e => dummy.focus())
 }

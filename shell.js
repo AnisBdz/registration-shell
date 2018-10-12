@@ -257,7 +257,7 @@ class Shell {
 		let system = this.system
 
 		// calculate responsive width and height for shell
-		let cols = Math.min(80, (window.innerWidth / 8).toFixed(0))
+		let cols = Math.min(80, (window.innerWidth / 9).toFixed(0))
 		let rows = (cols * (3/4) / 2.5).toFixed(0)
 
 		if (cols < 50) rows = 20

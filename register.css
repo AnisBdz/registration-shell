@@ -31,3 +31,7 @@
 
 #terminal .term { color: #E5E5E5 }
 #terminal .termReverse { background: white }
+
+#dummy {
+	z-index: -1
+}
