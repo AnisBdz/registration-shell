@@ -61,6 +61,7 @@ function showTerminal() {
 	})
 	dummy.addEventListener('keydown', e => {
 		if (e.key == 'Unidentified') return
+		// if (e.key == "Enter") dummy.blur()
 		press(e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode)
 	})
 

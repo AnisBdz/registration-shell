@@ -260,7 +260,7 @@ class Shell {
 		let cols = Math.min(80, (window.innerWidth / 9).toFixed(0))
 		let rows = (cols * (3/4) / 2.5).toFixed(0)
 
-		if (cols < 50) rows = 20
+		// if (cols < 50) rows = 20
 
 		// Shell's command line interface
 		this.cli = new Terminal({
