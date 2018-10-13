@@ -135,7 +135,7 @@ class Shell {
 							if (!questions.length) {
 								// we are done here
 								self.register(answers)
-								return self.cli.prompt()
+								return
 							}
 
 							// get a question

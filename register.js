@@ -1,10 +1,24 @@
+firebase.initializeApp({
+    apiKey: "AIzaSyB36aCwpcXgKL46aL5DFczOJXI82O94ywc",
+    databaseURL: "https://shellmates-registration.firebaseio.com",
+  });
+
 let shell = new Shell({
 	id: 'terminal',
 
 	register(answer) {
 		this.system.env.USER = answer.name.toLowerCase().split(' ').join('-')
-		this.cli.write('Your response has been registered!')
-		console.log(answer)
+
+		let database = firebase.database()
+		database.ref('members/' + database.ref('members').push().key).set(answer, (error) => {
+			if (error) {
+				this.cli.write(':\'( An error has occured, please retry.')
+				return this.cli.prompt()
+			}
+
+			this.cli.write('Your response has been registered!')
+			return this.cli.prompt()
+		})
 	},
 
 	close() {
@@ -28,14 +42,14 @@ let shell = new Shell({
 
 		{
 			id: 'age',
-			question: `How old are you?`,
+			question: `How old are you? [18, 36]`,
 			type: Number,
 			range: [18, 36]
 		},
 
 		{
 			id: 'wilaya',
-			question: `Where are you from?`,
+			question: `Where are you from? [0, 2]`,
 			type: Array,
 			answers: ['Alger', 'Setif', 'Blida']
 		}
@@ -55,28 +69,34 @@ function showTerminal() {
 	document.getElementById('terminal-overlay').style.opacity = '1'
 	term.style.opacity = '0.9'
 
-	// handle mobile keyboard
-	let dummy = document.createElement('input')
-	dummy.setAttribute('autocapitalize', 'off')
-	dummy.setAttribute('style', `position: absolute; top: 10px; left: 10px;`)
-	dummy.id = 'dummy'
-	dummy.addEventListener('input', e => {
-		press(e.data.charCodeAt(0))
-		dummy.value = ''
-	})
-	dummy.addEventListener('keydown', e => {
-		if (e.key == 'Unidentified') return
-		// if (e.key == "Enter") dummy.blur()
-		press(e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode)
-	})
+	var md = new MobileDetect(window.navigator.userAgent)
+	if(md.mobile()) handleMobile()
 
-	function press(key) {
-		Terminal.prototype.globals.keyHandler({ which: key, _remapped: true, _repeated: false})
+
+	function handleMobile() {
+		// handle mobile keyboard
+		let dummy = document.createElement('input')
+		dummy.setAttribute('autocapitalize', 'off')
+		dummy.setAttribute('style', `position: absolute; top: 10px; left: 10px;`)
+		dummy.id = 'dummy'
+		dummy.addEventListener('input', e => {
+			press(e.data.charCodeAt(0))
+			dummy.value = ''
+		})
+		dummy.addEventListener('keydown', e => {
+			if (e.key == 'Unidentified') return
+			// if (e.key == "Enter") dummy.blur()
+			press(e.key.length == 1 ? e.key.charCodeAt(0) : e.keyCode)
+		})
+
+		function press(key) {
+			Terminal.prototype.globals.keyHandler({ which: key, _remapped: true, _repeated: false})
+		}
+
+		term.appendChild(dummy)
+		term.addEventListener('click', e => dummy.focus())
+		dummy.focus()
 	}
-
-	term.appendChild(dummy)
-	term.addEventListener('click', e => dummy.focus())
-	dummy.focus()
 }
 
 function closeTerminal() {
