@@ -127,6 +127,8 @@ class Shell {
 						// i wonder what are the answers
 						let answers = {}
 
+						self.cli.write('So you want to join the Shellmates!%nLet me ask you a few questions.%n')
+
 						// start asking questions :)
 						ask()
 
@@ -134,7 +136,19 @@ class Shell {
 							// still got some question?
 							if (!questions.length) {
 								// we are done here
-								self.register(answers)
+
+								self.cli.write('%nConfirm your response: %n')
+								for (let key in answers) self.cli.write(`${key}: %c7${answers[key]}%c0%n`)
+
+								self.cli.write('%nConfirm?%n0. Yes%n1. No%n')
+								self.cli.scan().then(function check(answer) {
+									if (answer == '0') {
+										return self.register(answers)
+									}
+
+									return self.cli.prompt()
+								})
+
 								return
 							}
 
@@ -142,7 +156,7 @@ class Shell {
 							let question = questions.pop()
 
 							// ask about it
-							self.cli.write(question.question + '%n')
+							self.cli.write('%n' + question.question + '%n')
 							if (question.type == Array) {
 								let i = 0
 								for (let answer of question.answers) {
@@ -261,15 +275,20 @@ class Shell {
 		let system = this.system
 
 		// calculate responsive width and height for shell
-		let cols = Math.min(80, (window.innerWidth / 9).toFixed(0))
+		let cols = Math.min(70, (window.innerWidth / 9).toFixed(0))
 		let rows = (cols * (3/4) / 2.5).toFixed(0)
 
-		// if (cols < 50) rows = 20
+		rows = Math.max(18, rows)
+
+		let shellmates = ' ____  _          _ _                 _            %n/ ___|| |__   ___| | |_ __ ___   __ _| |_ ___  ___ %n\\___ \\| \'_ \\ / _ \\ | | \'_ ` _ \\ / _` | __/ _ \\/ __|%n ___) | | | |  __/ | | | | | | | (_| | ||  __/\\__ \\%n|____/|_| |_|\\___|_|_|_| |_| |_|\\__,_|\\__\\___||___/%n'
+
+		if (cols < 55) shellmates = '%+r== Shellmates ==%-r'
+		else shellmates = '%c3' + shellmates + '%c0'
 
 		// Shell's command line interface
 		this.cli = new Terminal({
 
-			greeting: '%+r == Shellmates == %-r%nType %c7help%c0 for help.%nType %c7join%c0 to join the %c5shellmates%c0%n',
+			greeting: shellmates + '%nType %c7help%c0 for help.%nType %c7join%c0 to join the %c5shellmates%c0%n',
 			ps: () => {
 				let wd = system.fs.cwd.slice(1).join('/')
 				return `%c3${system.env.USER}@shellmates:%c7${wd == 'home/guest' ? '~' : `/${wd}`}%c0 $`

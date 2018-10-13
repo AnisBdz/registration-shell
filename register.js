@@ -7,7 +7,9 @@ let shell = new Shell({
 	id: 'terminal',
 
 	register(answer) {
-		this.system.env.USER = answer.name.toLowerCase().split(' ').join('-')
+		this.system.env.USER = [answer.firstname, answer.lastname].join('-').toLowerCase()
+
+
 
 		let database = firebase.database()
 		database.ref('members/' + database.ref('members').push().key).set(answer, (error) => {
@@ -16,7 +18,7 @@ let shell = new Shell({
 				return this.cli.prompt()
 			}
 
-			this.cli.write('Your response has been registered!')
+			this.cli.write('%c7:)%c0 Your response has been registered successfuly!')
 			return this.cli.prompt()
 		})
 	},
@@ -27,31 +29,68 @@ let shell = new Shell({
 
 	form: [
 		{
-			id: 'name',
-			question: `What's your full name?`,
+			id: "firstname",
+			question: "First Name?",
 			type: String,
-			range: [0, 50]
+			range: [0, 32]
 		},
-
 		{
-			id: 'email',
-			question: `What's your email?`,
+			id: "lastname",
+			question: "Last Name?",
+			type: String,
+			range: [1, 32]
+		},
+		{
+			id: "email",
+			question: "Email?",
 			type: String,
 			regex: /^\S+@\S+\.\S+$/
 		},
-
 		{
-			id: 'age',
-			question: `How old are you? [18, 36]`,
-			type: Number,
-			range: [18, 36]
-		},
-
-		{
-			id: 'wilaya',
-			question: `Where are you from? [0, 2]`,
+			id: "gender",
+			question: "Gender?",
 			type: Array,
-			answers: ['Alger', 'Setif', 'Blida']
+			answers: ["Male", "Female"]
+		},
+		{
+			id: "phone",
+			question: "Phone Number?",
+			type: Number,
+		},
+		{
+			id: "school",
+			question: "Where do you study?",
+			type: String,
+		},
+		{
+			id: "school_year",
+			question: "What year?",
+			type: String,
+			range: [1, 8]
+		},
+		{
+			id: "security_level",
+			question: "What are your interests in information security?",
+			type: Array,
+			answers: [ "I want to discover the field", "I need to improve my skills", "I'm root" ]
+		},
+		{
+			id: "programming_level",
+			question: "What's your estimated level in programming from 0 to 10?",
+			type: Number,
+			range: [0, 10]
+		},
+		{
+			id: "linux_level",
+			question: "How familiar are you with the Linux Terminal?",
+			type: Array,
+			answers: ["I'm a beginner", "i know some basics", "i'm an intermediate", "I consider myself as an expert"]
+		},
+		{
+			id: "hack_fb",
+			question: "Are you ready to learn to hack facebook accounts?",
+			type: Array,
+			answers: [ "No, that's inappropiate", "Yes (We won't teach you that)" ]
 		}
 	]
 })
@@ -59,15 +98,12 @@ let shell = new Shell({
 
 /* DOM Manipulation */
 showTerminal()
-document.getElementById('register-btn').addEventListener('click', showTerminal)
 
 function showTerminal() {
 	let term = document.getElementById('terminal')
 
 	shell.open()
-	document.getElementById('terminal-overlay').style.visibility = 'visible'
-	document.getElementById('terminal-overlay').style.opacity = '1'
-	term.style.opacity = '0.9'
+	term.style.opacity = '1'
 
 	var md = new MobileDetect(window.navigator.userAgent)
 	if(md.mobile()) handleMobile()
@@ -77,7 +113,7 @@ function showTerminal() {
 		// handle mobile keyboard
 		let dummy = document.createElement('input')
 		dummy.setAttribute('autocapitalize', 'off')
-		dummy.setAttribute('style', `position: absolute; top: 10px; left: 10px;`)
+		dummy.setAttribute('style', `position: relative; top: -200px; float: left`)
 		dummy.id = 'dummy'
 		dummy.addEventListener('input', e => {
 			press(e.data.charCodeAt(0))
@@ -101,8 +137,4 @@ function showTerminal() {
 
 function closeTerminal() {
 	document.getElementById('terminal').style.opacity = '0'
-	document.getElementById('terminal-overlay').style.opacity = '0'
-	setTimeout(() => {
-		document.getElementById('terminal-overlay').style.visibility = 'hidden'
-	}, 500)
 }
