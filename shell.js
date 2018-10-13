@@ -188,6 +188,56 @@ class Shell {
 
 						return ''
 					}
+				},
+
+				lohi: {
+					name: 'lohi',
+					man: 'Low or High Game',
+					fn:() => {
+						let self = this
+						this.cli.write(`Welcome to %c4Low%c0 or %c5High%c0 game!%n%nI'm now thinking of a random number.%nTry to guess it to win a %c6treat%c0!`)
+
+						let n = Math.round(Math.random() * 100)
+						let treat = crypt('YAW-A-SI-EREHT-LLEHS-A-SI-EREHT-EREHW', n)
+
+						function crypt(s, n) {
+							let r = s.split('').reverse().join('')
+							let res = ''
+							for (let c of r) {
+								if (c == '-') res += '-'
+								else {
+									res += String.fromCharCode(((c.charCodeAt(0) - 65) + n) % 26 + 65)
+								}
+							}
+							return res
+						}
+
+						ask()
+						function ask() {
+							self.cli.scan().then(function (answer) {
+								let int = parseInt(answer)
+
+								if (int == n) {
+									self.cli.write('%c7Congratulations!%c0 You have won %c4:D%c0%n')
+									self.cli.write(`Here is your treat: %c9${treat}%c0%n`)
+									self.cli.write(`%c1Heil Caesar!%c0`)
+									self.cli.prompt()
+								}
+
+								else if (int > n) {
+									self.cli.write('%c5High%c0')
+									ask()
+								}
+
+								else {
+									self.cli.write('%c4Low%c0')
+									ask()
+								}
+							})
+						}
+
+						return ''
+					}
 				}
 			},
 
@@ -232,6 +282,7 @@ class Shell {
 					'export': 'Binary executable.',
 					cd: 'Binary executable.',
 					ls: 'Binary executable.',
+					lohi: 'Binary executable.',
 					cat: 'Binary executable.',
 					man: 'Binary executable.',
 					history: 'Binary executable.',
@@ -259,7 +310,7 @@ class Shell {
 		this.system.fs.FileSystem.content.home.content.guest.content.docs.content.homework.user = 'guest'
 		this.system.fs.FileSystem.content.home.content.guest.content.docs.content.homework.group = 'guest'
 		this.system.fs.FileSystem.content.init.permission = 'rwx------'
-		for (let file of ['help', 'whoami', 'pwd', 'printenv', 'export', 'cd', 'ls', 'cat', 'man', 'history', 'clear', 'exit', 'join', 'shell'])
+		for (let file of ['lohi', 'help', 'whoami', 'pwd', 'printenv', 'export', 'cd', 'ls', 'cat', 'man', 'history', 'clear', 'exit', 'join', 'shell'])
 			this.system.fs.FileSystem.content.bin.content[file].permission = 'rwxr-xr-x'
 
 

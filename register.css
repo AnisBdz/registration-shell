@@ -17,6 +17,8 @@ body {
 
 #terminal > table > tbody > tr > td {
 	border-radius: 4px;
+	padding: 10px;
+	line-height: normal;
 }
 
 #terminal .term, #terminal .termReverse {

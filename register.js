@@ -18,7 +18,9 @@ let shell = new Shell({
 				return this.cli.prompt()
 			}
 
-			this.cli.write('%c7:)%c0 Your response has been registered successfuly!')
+			this.cli.write('%c7:)%c0 Your response has been registered successfuly!%n')
+			this.cli.write('Try to play the low or high game.%n')
+			this.cli.write('type %c7lohi%c0 to play.')
 			return this.cli.prompt()
 		})
 	},
