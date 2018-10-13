@@ -33,7 +33,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   } catch (e) {
     n.innerText = t;
   }
-}(document, ".term{font-family:courier,fixed,swiss,sans-serif;font-size:12px;color:#33d011;background:0 0}.termReverse{color:#111;background:#33d011}#terminal-overlay{background:rgba(0,0,0,.85);width:100%;height:100%;position:fixed;top:0;left:0;opacity:1;transition:all 1s ease-out 0s}#terminal{display:inline-block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:5px 5px 20px 0 rgba(0,0,0,.2);transition:all .5s ease-out 0s}#terminal>table>tbody>tr>td{border-radius:4px}#terminal .term,#terminal .termReverse{font-size:14px;font-family:monospace}#terminal .term{color:#E5E5E5}#terminal .termReverse{background:#fff}#dummy{z-index:-1}");
+}(document, ".term{font-family:courier,fixed,swiss,sans-serif;font-size:12px;color:#33d011;background:0 0}.termReverse{color:#111;background:#33d011}body{margin:0;padding:0}#terminal{display:inline-block;margin:0 auto;transition:all .5s ease-out 0s}#terminal>table{box-shadow:5px 5px 20px 0 rgba(0,0,0,.2)}#terminal>table>tbody>tr>td{border-radius:4px}#terminal .term,#terminal .termReverse{font-size:14px;font-family:monospace}#terminal .term{color:#E5E5E5}#terminal .termReverse{background:#fff}#dummy{z-index:-1;opacity:0}");
 /*!@license Copyright 2013, Heinrich Goebl, License: MIT, see https://github.com/hgoebl/mobile-detect.js*/
 
 !function (a, b) {
@@ -5905,7 +5905,8 @@ function () {
             var questions = _toConsumableArray(_this2.form); // i wonder what are the answers
 
 
-            var answers = {}; // start asking questions :)
+            var answers = {};
+            self.cli.write('So you want to join the Shellmates!%nLet me ask you a few questions.%n'); // start asking questions :)
 
             ask();
 
@@ -5913,14 +5914,27 @@ function () {
               // still got some question?
               if (!questions.length) {
                 // we are done here
-                self.register(answers);
+                self.cli.write('%nConfirm your response: %n');
+
+                for (var key in answers) {
+                  self.cli.write("".concat(key, ": %c7").concat(answers[key], "%c0%n"));
+                }
+
+                self.cli.write('%nConfirm?%n0. Yes%n1. No%n');
+                self.cli.scan().then(function check(answer) {
+                  if (answer == '0') {
+                    return self.register(answers);
+                  }
+
+                  return self.cli.prompt();
+                });
                 return;
               } // get a question
 
 
               var question = questions.pop(); // ask about it
 
-              self.cli.write(question.question + '%n');
+              self.cli.write('%n' + question.question + '%n');
 
               if (question.type == Array) {
                 var i = 0;
@@ -6048,12 +6062,14 @@ function () {
 
     var system = this.system; // calculate responsive width and height for shell
 
-    var cols = Math.min(80, (window.innerWidth / 9).toFixed(0));
-    var rows = (cols * (3 / 4) / 2.5).toFixed(0); // if (cols < 50) rows = 20
-    // Shell's command line interface
+    var cols = Math.min(70, (window.innerWidth / 9).toFixed(0));
+    var rows = (cols * (3 / 4) / 2.5).toFixed(0);
+    rows = Math.max(18, rows);
+    var shellmates = ' ____  _          _ _                 _            %n/ ___|| |__   ___| | |_ __ ___   __ _| |_ ___  ___ %n\\___ \\| \'_ \\ / _ \\ | | \'_ ` _ \\ / _` | __/ _ \\/ __|%n ___) | | | |  __/ | | | | | | | (_| | ||  __/\\__ \\%n|____/|_| |_|\\___|_|_|_| |_| |_|\\__,_|\\__\\___||___/%n';
+    if (cols < 55) shellmates = '%+r== Shellmates ==%-r';else shellmates = '%c3' + shellmates + '%c0'; // Shell's command line interface
 
     this.cli = new Terminal({
-      greeting: '%+r == Shellmates == %-r%nType %c7help%c0 for help.%nType %c7join%c0 to join the %c5shellmates%c0%n',
+      greeting: shellmates + '%nType %c7help%c0 for help.%nType %c7join%c0 to join the %c5shellmates%c0%n',
       ps: function ps() {
         var wd = system.fs.cwd.slice(1).join('/');
         return "%c3".concat(system.env.USER, "@shellmates:%c7").concat(wd == 'home/guest' ? '~' : "/".concat(wd), "%c0 $");
@@ -6135,7 +6151,7 @@ var shell = new Shell({
   register: function register(answer) {
     var _this4 = this;
 
-    this.system.env.USER = answer.name.toLowerCase().split(' ').join('-');
+    this.system.env.USER = [answer.firstname, answer.lastname].join('-').toLowerCase();
     var database = firebase.database();
     database.ref('members/' + database.ref('members').push().key).set(answer, function (error) {
       if (error) {
@@ -6144,7 +6160,7 @@ var shell = new Shell({
         return _this4.cli.prompt();
       }
 
-      _this4.cli.write('Your response has been registered!');
+      _this4.cli.write('%c7:)%c0 Your response has been registered successfuly!');
 
       return _this4.cli.prompt();
     });
@@ -6153,38 +6169,68 @@ var shell = new Shell({
     closeTerminal();
   },
   form: [{
-    id: 'name',
-    question: "What's your full name?",
+    id: "firstname",
+    question: "First Name?",
     type: String,
-    range: [0, 50]
+    range: [0, 32]
   }, {
-    id: 'email',
-    question: "What's your email?",
+    id: "lastname",
+    question: "Last Name?",
+    type: String,
+    range: [1, 32]
+  }, {
+    id: "email",
+    question: "Email?",
     type: String,
     regex: /^\S+@\S+\.\S+$/
   }, {
-    id: 'age',
-    question: "How old are you? [18, 36]",
-    type: Number,
-    range: [18, 36]
-  }, {
-    id: 'wilaya',
-    question: "Where are you from? [0, 2]",
+    id: "gender",
+    question: "Gender?",
     type: Array,
-    answers: ['Alger', 'Setif', 'Blida']
+    answers: ["Male", "Female"]
+  }, {
+    id: "phone",
+    question: "Phone Number?",
+    type: Number
+  }, {
+    id: "school",
+    question: "Where do you study?",
+    type: String
+  }, {
+    id: "school_year",
+    question: "What year?",
+    type: String,
+    range: [1, 8]
+  }, {
+    id: "security_level",
+    question: "What are your interests in information security?",
+    type: Array,
+    answers: ["I want to discover the field", "I need to improve my skills", "I'm root"]
+  }, {
+    id: "programming_level",
+    question: "What's your estimated level in programming from 0 to 10?",
+    type: Number,
+    range: [0, 10]
+  }, {
+    id: "linux_level",
+    question: "How familiar are you with the Linux Terminal?",
+    type: Array,
+    answers: ["I'm a beginner", "i know some basics", "i'm an intermediate", "I consider myself as an expert"]
+  }, {
+    id: "hack_fb",
+    question: "Are you ready to learn to hack facebook accounts?",
+    type: Array,
+    answers: ["No, that's inappropiate", "Yes (We won't teach you that)"]
   }]
 });
 /* DOM Manipulation */
 
 showTerminal();
-document.getElementById('register-btn').addEventListener('click', showTerminal);
 
 function showTerminal() {
   var term = document.getElementById('terminal');
   shell.open();
-  document.getElementById('terminal-overlay').style.visibility = 'visible';
-  document.getElementById('terminal-overlay').style.opacity = '1';
-  term.style.opacity = '0.9';
+  term.style.opacity = '1';
   var md = new MobileDetect(window.navigator.userAgent);
   if (md.mobile()) handleMobile();
 
@@ -6192,7 +6238,7 @@ function showTerminal() {
     // handle mobile keyboard
     var dummy = document.createElement('input');
     dummy.setAttribute('autocapitalize', 'off');
-    dummy.setAttribute('style', "position: absolute; top: 10px; left: 10px;");
+    dummy.setAttribute('style', "position: relative; top: -200px; float: left");
     dummy.id = 'dummy';
     dummy.addEventListener('input', function (e) {
       press(e.data.charCodeAt(0));
@@ -6222,8 +6268,4 @@ function showTerminal() {
 
 function closeTerminal() {
   document.getElementById('terminal').style.opacity = '0';
-  document.getElementById('terminal-overlay').style.opacity = '0';
-  setTimeout(function () {
-    document.getElementById('terminal-overlay').style.visibility = 'hidden';
-  }, 500);
 }
