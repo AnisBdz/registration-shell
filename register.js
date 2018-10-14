@@ -12,7 +12,7 @@ let shell = new Shell({
 
 
 		let database = firebase.database()
-		database.ref('members/' + database.ref('members').push().key).set(answer, (error) => {
+		database.ref('members/' + database.ref('members').push().key + Date.now().toString()).set(answer, (error) => {
 			if (error) {
 				this.cli.write(':\'( An error has occured, please retry.')
 				return this.cli.prompt()
@@ -74,7 +74,8 @@ let shell = new Shell({
 			id: "security_level",
 			question: "What are your interests in information security?",
 			type: Array,
-			answers: [ "I want to discover the field", "I need to improve my skills", "I'm root" ]
+			answers: [ "I want to discover the field",
+			"I need to improve my skills", "I'm root" ]
 		},
 		{
 			id: "programming_level",
